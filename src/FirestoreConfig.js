@@ -2,7 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/firebase-firestore'
 
 const config = {
-    apiKey: "AIzaSyBzameSRDDI5THhm6XU-o9VeN2SI7H-Uxg",
+    apiKey: "You Key",
     authDomain: "crud-react-redux-firestore.firebaseapp.com",
     projectId: "crud-react-redux-firestore"
   };
