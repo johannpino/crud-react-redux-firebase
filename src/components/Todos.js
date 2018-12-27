@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import db from '../FirestoreConfig';
-import { Table, Button, Row, Col, Input, InputGroup } from 'reactstrap';
+import { Table, Button, Row, Col, Input, InputGroup, Fade } from 'reactstrap';
 
 class Todos extends Component {
 
@@ -9,7 +9,9 @@ class Todos extends Component {
         this.state = {
             items:[],
             inputValue: "",
-            edit: false
+            edit: false,
+            fadeIn: false,
+            message:''
         }
     }
 
@@ -28,7 +30,6 @@ class Todos extends Component {
     }
     
     handleOnChange = (e) => {
-        console.log(e)
         this.setState({
             inputValue: e.target.value
         })
@@ -43,7 +44,7 @@ class Todos extends Component {
         db.collection('todo').add({
             item: inputValue
         }).then( () => {
-            console.log('Texto agregado')
+            this.message('Agregado')
             
         }).catch((err => console.log(err)
         )) : 
@@ -56,7 +57,7 @@ class Todos extends Component {
         db.collection('todo').doc(id).update({
             item: inputValue
         }).then( () => {
-            console.log('actualizado')
+            this.message('Actualizado')
         }).catch((err) => console.log(err))
     }
     getTodo = (id) =>{
@@ -74,6 +75,26 @@ class Todos extends Component {
             }
 
         })
+    }
+
+    deleteItem = (id) => {
+        db.collection('todo').doc(id).delete()
+    }
+
+    message = (message) => {
+        this.setState({
+            fadeIn:true,
+            message: message
+        })
+
+        setTimeout( () => {
+            this.setState({
+                fadeIn: false,
+                inputValue: "",
+                edit:false
+            })
+        }, 3000)
+
     }
 
     render() {
@@ -101,6 +122,9 @@ class Todos extends Component {
                     </Col>
                 </Row>
                 <br />
+                <Fade in={this.state.fadeIn} tag="h6" className="mt-3 text-center text-success">
+                    {this.state.message}
+                </Fade>
                 <Table hover className="text-center">
                     <thead>
                         <tr>
@@ -115,7 +139,7 @@ class Todos extends Component {
                                 return <tr key={item.id}>
                                     <td>{item.data.item}</td>
                                     <td> <Button color='warning' onClick={() => this.getTodo(item.id)} >Editar</Button> </td>
-                                    <td> <Button color='danger'>Eliminar</Button> </td>
+                                    <td> <Button color='danger' onClick={() => this.deleteItem(item.id)}>Eliminar</Button> </td>
                                 </tr>
                             }) : null
                         }
